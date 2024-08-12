@@ -39,7 +39,7 @@ if response.status_code == 200:
             if rain:
                 rain = rain.text
 
-            weather_data.append([current_date, 0, 0, current_time, type, int(temp), int(rain)])
+            weather_data.append([current_date, False, 0, current_time, type, int(temp), int(rain)])
 
             break
 

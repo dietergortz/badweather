@@ -64,6 +64,6 @@ for i in range(days_to_capture):
                             if chance:
                                 chance = chance.group()
 
-                    weather_data.append([date, 1, i, int(hour.text), type.text.lower(), int(temp), int(chance)])
+                    weather_data.append([date, True, i, int(hour.text), type.text.lower(), int(temp), int(chance)])
 
 print(weather_data)
