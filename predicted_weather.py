@@ -15,7 +15,7 @@ days_to_capture = 4
 
 # Since PythonAnywhere's tasks cannot be configured to specific time zones
 # I need to run the task every hour and check if the converted hour is correct.
-if current_hour not in (12, 13, 15, 18, 00):
+if current_hour != 12:
     sys.exit()
 
 url = 'https://www.bbc.co.uk/weather/2643743'
@@ -41,7 +41,7 @@ for i in range(days_to_capture):
     response = requests.get(url + '/day' + str(i), headers=head)
     
     if i == 0:
-        hours = ['12', '13', '15', '18', '00']
+        hours = ['12', '13', '15', '18', '23']
     else:
         hours = ['12']
 

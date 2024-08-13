@@ -15,7 +15,7 @@ year = current_date.year
 
 # Since PythonAnywhere's tasks cannot be configured to specific time zones
 # I need to run the task every hour and check if the converted hour is correct.
-if current_hour not in (12, 13, 15, 18, 00):
+if current_hour not in (12, 13, 15, 18, 23):
     sys.exit()
 
 url = 'https://www.yr.no/en/forecast/daily-table/2-2643743/United%20Kingdom/England/Greater%20London/London'
