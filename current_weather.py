@@ -11,12 +11,15 @@ utc_now = dt.now(pytz.utc)
 london_tz = pytz.timezone('Europe/London')
 current_date = utc_now.astimezone(london_tz)
 current_hour = current_date.time().hour
-year = current_date.year
+
+# For easier data comparison 00:00 is switched to the prev day.
+if current_hour == 0:
+    current_date -= pd.Timedelta(days=1)
 
 # Since PythonAnywhere's tasks cannot be configured to specific time zones
 # I need to run the task every hour and check if the converted hour is correct.
-if current_hour not in (12, 13, 15, 18, 23):
-    sys.exit()
+if current_hour not in (12, 13, 15, 18, 00):
+   sys.exit()
 
 url = 'https://www.yr.no/en/forecast/daily-table/2-2643743/United%20Kingdom/England/Greater%20London/London'
 head = {
@@ -50,7 +53,7 @@ if response.status_code == 200:
             if rain:
                 rain = rain.text
 
-            current_weather.append([current_date, 0, 0, current_hour, type, int(temp), int(rain)])
+            current_weather.append([current_date.date(), 0, 0, current_hour, type, int(temp), int(rain)])
 
             break
 

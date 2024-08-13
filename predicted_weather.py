@@ -16,7 +16,7 @@ days_to_capture = 4
 # Since PythonAnywhere's tasks cannot be configured to specific time zones
 # I need to run the task every hour and check if the converted hour is correct.
 if current_hour != 12:
-    sys.exit()
+   sys.exit()
 
 url = 'https://www.bbc.co.uk/weather/2643743'
 head = {
@@ -41,7 +41,7 @@ for i in range(days_to_capture):
     response = requests.get(url + '/day' + str(i), headers=head)
     
     if i == 0:
-        hours = ['12', '13', '15', '18', '23']
+        hours = ['12', '13', '15', '18', '00']
     else:
         hours = ['12']
 
@@ -50,7 +50,6 @@ for i in range(days_to_capture):
         forecast = soup.select(f'button[class^="{forecast_class}"]')
 
         if forecast:
-            #weather_data.append(return_forecast(forecast, date, hours))
             for item in forecast:
                 hour = item.find('span', class_=f'{hours_class}')
                 type = None
