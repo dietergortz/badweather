@@ -12,10 +12,6 @@ london_tz = pytz.timezone('Europe/London')
 current_date = utc_now.astimezone(london_tz)
 current_hour = current_date.time().hour
 
-# For easier data comparison 00:00 is switched to the prev day.
-if current_hour == 0:
-    current_date -= timedelta(days=1)
-
 # Since PythonAnywhere's tasks cannot be configured to specific time zones
 # I need to run the task every hour and check if the converted hour is correct.
 if current_hour not in (12, 13, 15, 18, 00):

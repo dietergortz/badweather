@@ -41,7 +41,7 @@ for i in range(days_to_capture):
     response = requests.get(url + '/day' + str(i), headers=head)
     
     if i == 0:
-        hours = ['12', '13', '15', '18', '00']
+        hours = ['13', '15', '18', '00']
     else:
         hours = ['12']
 
@@ -73,6 +73,8 @@ for i in range(days_to_capture):
                             if chance:
                                 chance = chance.group()
 
+                    if int(hour.text) == 0:
+                        date = date + timedelta(days=1)
                     predicted_weather.append([date, i, int(hour.text), type.text.lower(), int(temp), int(chance), None, None, None])
 
 if len(predicted_weather) > 0:
