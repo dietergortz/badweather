@@ -1,11 +1,11 @@
-from bs4 import BeautifulSoup as bs
 from datetime import datetime as dt, timedelta
+from bs4 import BeautifulSoup as bs
 import pandas as pd
-import requests
-import re
 import db_connect # Hides my passwords
+import requests
 import pytz
 import sys
+import re
 
 utc_now = dt.now(pytz.utc)
 london_tz = pytz.timezone('Europe/London')
@@ -73,14 +73,14 @@ for i in range(days_to_capture):
                             if chance:
                                 chance = chance.group()
 
-                    predicted_weather.append([date, 1, i, int(hour.text), type.text.lower(), int(temp), int(chance)])
+                    predicted_weather.append([date, i, int(hour.text), type.text.lower(), int(temp), int(chance), None, None, None])
 
 if len(predicted_weather) > 0:
     tunnel = db_connect.open_tunnel()
     tunnel.start()
     engine = db_connect.start_engine(tunnel)
 
-    headers = ['date', 'prediction', 'day_offset', 'time', 'type', 'temp', 'rain']
+    headers = ['date', 'offset', 'time', 'predicted_type', 'predicted_temp', 'predicted_rain', 'actual_type', 'actual_temp', 'actual_rain']
     predicted_weather = pd.DataFrame(predicted_weather, columns=headers)
     predicted_weather.to_sql(name='weather_data', con=engine, if_exists='replace', index=False)
 

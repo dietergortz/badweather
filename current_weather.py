@@ -1,10 +1,10 @@
 from bs4 import BeautifulSoup as bs
-from datetime import datetime as dt
-import pandas as pd
+from datetime import timedelta, datetime as dt
 import requests
 import re
 import db_connect # Hides my passwords
 import pytz
+from sqlalchemy import update, MetaData, and_
 import sys
 
 utc_now = dt.now(pytz.utc)
@@ -14,7 +14,7 @@ current_hour = current_date.time().hour
 
 # For easier data comparison 00:00 is switched to the prev day.
 if current_hour == 0:
-    current_date -= pd.Timedelta(days=1)
+    current_date -= timedelta(days=1)
 
 # Since PythonAnywhere's tasks cannot be configured to specific time zones
 # I need to run the task every hour and check if the converted hour is correct.
@@ -53,7 +53,7 @@ if response.status_code == 200:
             if rain:
                 rain = rain.text
 
-            current_weather.append([current_date.date(), 0, 0, current_hour, type, int(temp), int(rain)])
+            current_weather = [current_date.date(), current_hour, type, int(temp), int(rain)]
 
             break
 
@@ -62,8 +62,21 @@ if len(current_weather) > 0:
     tunnel.start()
     engine = db_connect.start_engine(tunnel)
 
-    headers = ['date', 'prediction', 'day_offset', 'time', 'type', 'temp', 'rain']
-    current_weather = pd.DataFrame(current_weather, columns=headers)
-    current_weather.to_sql(name='weather_data', con=engine, if_exists='replace', index=False)
+    metadata = MetaData()
+    metadata.reflect(bind=engine)
+    weather_data = metadata.tables['weather_data']
 
+    stmt = update(weather_data).where(
+        and_(
+            weather_data.c.date == current_weather[0],
+            weather_data.c.time == current_weather[1]
+        )
+    ).values(
+        actual_type = current_weather[2],
+        actual_temp = current_weather[3],
+        actual_rain = current_weather[4]
+    )
+
+    with engine.begin() as conn:
+        conn.execute(stmt)
     tunnel.stop()
