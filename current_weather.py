@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup as bs
-from datetime import timedelta, datetime as dt
+from datetime import datetime as dt
 import requests
 import re
 import db_connect # Hides my passwords
